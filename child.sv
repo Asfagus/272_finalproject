@@ -542,7 +542,7 @@ ps p(bif.TI,bif.FO);
 initial begin
 //    repeat(10_000_000) @(posedge(clk));
     $dumpfile("perm.vcd");
-    $dumpvars(9,top);
+    $dumpvars(9,top,box,ps,switch);
     repeat(100000) @(posedge(clk));
     #5;
     $dumpoff;

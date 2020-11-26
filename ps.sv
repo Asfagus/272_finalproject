@@ -1,18 +1,18 @@
 `include "switch.sv"
 module ps (NOCI.TI to,NOCI.FO from);
 
-wire clk,reset;
-wire tod_ctl,frm_ctl;
-wire [7:0] tod_data,frm_data;
+//instantiate the interface for switch
+NOCI si (to.clk,to.reset);
+
+//instantiate module for switch
+switch s1 (si.TI,si.FO);
 
 
-assign clk=to.clk;
-assign reset=to.reset;
-assign tod_ctl=to.noc_to_dev_ctl;
-assign tod_data=to.noc_to_dev_data;
-assign from.noc_from_dev_ctl=frm_ctl;
-assign from.noc_from_dev_data=frm_data;
+//connect wires
+assign si.noc_to_dev_ctl=to.noc_to_dev_ctl;
+assign si.noc_to_dev_data=to.noc_to_dev_data;
+assign from.noc_from_dev_ctl=si.noc_from_dev_ctl;
+assign from.noc_from_dev_data=si.noc_from_dev_data;
 
-switch s1 (clk,reset,tod_ctl,tod_data,frm_ctl,frm_data);
 
 endmodule
