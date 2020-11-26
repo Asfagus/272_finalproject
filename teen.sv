@@ -510,9 +510,9 @@ initial begin
         Hread0(8'h40);
         Hread1(8'h41);
     join_none
-    fork
-        t10(8'h40);
-        t11(8'h41);
+    fork //starts two parallel threads
+        t10(8'h40); //gives read/write to NOC for device number 40
+        t11(8'h41); //gives read/write to NOC for device number 41
     join
     $display("\n\n\nOh what joy, It's a happy perm block\n\n\n");
     $finish;

@@ -1,15 +1,11 @@
+//this module encapsulates the NOC and 4 mems and perm from switch
 
 `include "perm.sv"
 `include "m55.sv"
 `include "nochw2.sv"
 
-module switch (
-	input clk,reset,
-	input tod_ctl,
-	input [7:0] tod_data,
-	output frm_ctl,
-	output [7:0] frm_data
-);
+module box ();
+
 
 
 reg [63:0] din,dout;
