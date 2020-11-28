@@ -23,7 +23,7 @@ reg [2:0] m1ax,m1ay,m1wx,m1wy,m2ax,m2ay,m2wx,m2wy,m3ax,m3ay,m3wx,m3wy,m4ax,m4ay,
 reg [63:0] m1rd,m1wd,m2rd,m2wd,m3rd,m3wd,m4rd,m4wd;
 
 
-//device 40
+//device 40,41,42,43
 perm_blk perm(clk,reset,pushin,stopin,firstin,din,
     m1ax,m1ay,m1rd,m1wx,m1wy,m1wr,m1wd,
     m2ax,m2ay,m2rd,m2wx,m2wy,m2wr,m2wd,

@@ -227,7 +227,7 @@ task Hread0(input reg[7:0] id);
     forever begin
         ##1;
         if (!pushoutHigh[ix]) continue;
-//        $display("pushoutHigh %t",$realtime);
+        $display("pushoutHigh %t",$realtime);
         dleft=200;
         daddr=id;
         saddr=$urandom_range(8'h80,8'hf0);
@@ -238,7 +238,7 @@ task Hread0(input reg[7:0] id);
             while( (1<<dlen) > dleft ) dlen=$urandom_range(3,7);
             READ.get(1);
             BUS.get(1);
-//            $display("Read Request has the bus %t",$realtime);
+            $display("Read Request has the bus %t",$realtime);
             bif.noc_to_dev_ctl=1;
             bif.noc_to_dev_data={alen,dlen,3'b001};
             ##1 #1;
@@ -256,7 +256,7 @@ task Hread0(input reg[7:0] id);
             bif.noc_to_dev_ctl=1;
             bif.noc_to_dev_data=0;
             dleft -= (1<<dlen);
-//            $display("Read Request releasing the bus %t",$realtime);
+            $display("Read Request releasing the bus %t",$realtime);
             BUS.put(1); // release the bus and wait for the data to come back
             while(!readSeen[ix]) ##1;
             readSeen[ix]=0;

@@ -539,8 +539,21 @@ endtask : t11
 
 ps p(bif.TI,bif.FO);
 
+//count no of data done
+int count;
+
+initial begin
+	count=0;
+	forever begin
+		@(posedge p.s1.b2.pushout)
+			count++;
+		//$display ("count:%d",count);
+	end	
+end
+
 initial begin
 //    repeat(10_000_000) @(posedge(clk));
+	repeat (1) @ (posedge p.s1.b2.pushout);
     $dumpfile("perm.vcd");
     $dumpvars(9,top);
     repeat(100000) @(posedge(clk));

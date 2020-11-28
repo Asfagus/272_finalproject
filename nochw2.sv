@@ -49,7 +49,7 @@ integer raddr_size,raddr_size_d, rdata_size, rdata_size_d;
 reg [7:0] dest_id,dest_id_d,src_id,src_id_d; 
 
 //d and s for cmd1
-reg [7:0] dest_id_r,src_id_r; 
+reg [7:0] dest_id_r,dest_id_r_q,src_id_r,src_id_r_q; 
 
 //packet size counter
 integer packet_size,packet_size_d;
@@ -90,10 +90,10 @@ reg write_resp,write_resp_d;
 reg [7:0] wr_dest,wr_src;
 
 //stopin response
-reg [7:0] swr_dest,swr_src;
+reg [7:0] swr_dest,swr_src,swr_dest_q,swr_src_q;
 
 //pushout response
-reg [7:0] pwr_dest,pwr_src;
+reg [7:0] pwr_dest,pwr_src, pwr_dest_q,pwr_src_q;
 
 //error codes
 reg [1:0] werr;
@@ -255,14 +255,14 @@ always @ (*)begin
 	rdata_size_d=rdata_size;
 	raddr_size_d=raddr_size;
 	dataout_d1=dataout_d;
-	dest_id_r=0;
-	src_id_r=0;
+	dest_id_r=dest_id_r_q;
+	src_id_r=src_id_r_q;
 	din=din_q;
 	werr_adl=0;
-	swr_src=0;
-	swr_dest=0;
-	pwr_src=0;
-	pwr_dest=0;
+	swr_src=swr_src_q;
+	swr_dest=swr_dest_q;
+	pwr_src=pwr_src_q;
+	pwr_dest=pwr_dest_q;
 	datain_d=datain;
 	wpushout_d=wpushout;
 	
@@ -302,45 +302,46 @@ always @ (*)begin
 		endcase
 	end
 	
-	if (read)begin //read
-		case (cs_read)
-		rreset_state:begin
-			//read_response_d=0;
-			if (tod_ctl)begin
+	//store read 
+	case (cs_read)
+	rreset_state:begin
+		//read_response_d=0;
+		
+		if(cmd==1)		
 				ns_read=rread_dest;
-			end
-			stopout_d=1;
-		end
-		rread_dest:begin
-			stopout_d=1;
-			dest_id_r=tod_data;
-			ns_read=rread_src;
-		end
-		rread_src:begin
-			src_id_r=tod_data;
-			ns_read=rread_addr;
-		end
-		rread_addr:begin
-			addr_r[0]=tod_data;
-			raddr_ctr_d=raddr_ctr+1;
-			
-			if (raddr_ctr_d==raddr_size)begin
-				raddr_ctr_d=0;
-				ns_read=read_resp_state;
-			end
-			else begin
-				addr_d=addr_d<<8;
-			end
-		end
-		read_resp_state:begin
-			//$display("give read response");
-			
-			ns_read=rreset_state;
-			read_d=0;
-			read_response_d=1;
-		end
-		endcase
+		stopout_d=1;
+		
 	end
+	rread_dest:begin
+		stopout_d=1;
+		dest_id_r=tod_data;
+		ns_read=rread_src;
+	end
+	rread_src:begin
+		src_id_r=tod_data;
+		ns_read=rread_addr;
+	end
+	rread_addr:begin
+		addr_r[0]=tod_data;
+		raddr_ctr_d=raddr_ctr+1;
+		
+		if (raddr_ctr_d==raddr_size)begin
+			raddr_ctr_d=0;
+			ns_read=read_resp_state;
+		end
+		else begin
+			addr_d=addr_d<<8;
+		end
+	end
+	read_resp_state:begin
+		//$display("give read response");
+		
+		ns_read=rreset_state;
+		read_d=0;
+		read_response_d=1;
+	end
+	endcase
+	
 	
 	if(cmd==2)	begin //Write
 		//take in source and dest id
@@ -506,8 +507,8 @@ always @ (*)begin
 						w_en_d=1;
 						//write 
 						message_response.cmd={2'b00,3'b000,3'b101};
-						message_response.d_id=swr_dest;
-						message_response.s_id=swr_src;
+						message_response.d_id=swr_dest_q;
+						message_response.s_id=swr_src_q;
 						message_response.addr=8'h42;
 						message_response.data_length=8'h78;
 						datain_d={message_response.data_length,message_response.addr,message_response.s_id,message_response.d_id,message_response.cmd};
@@ -531,8 +532,8 @@ always @ (*)begin
 				w_en_d=1;
 				//write 
 				message_response.cmd={2'b00,3'b000,3'b101};
-				message_response.d_id=pwr_dest;
-				message_response.s_id=pwr_src;
+				message_response.d_id=pwr_dest_q;
+				message_response.s_id=pwr_src_q;
 				message_response.addr=8'h17;
 				message_response.data_length=8'h12;
 				datain_d={message_response.data_length,message_response.addr,message_response.s_id,message_response.d_id,message_response.cmd};
@@ -550,7 +551,6 @@ always @ (*)begin
 		else begin
 			w_en_d=0;
 		end
-		
 					
 		//Handle responses using fifo
 		if (read_response && cs_fifo==0)begin	//do not interrupt an ongoing response
@@ -568,13 +568,13 @@ always @ (*)begin
 			end
 			rrwrite_dest:begin
 				frm_ctl_d=0;
-				frm_data_d=dest_id_r;
+				frm_data_d=src_id_r_q;
 				ns_rresp=rrwrite_src;
 				stopout_d=1;
 			end
 			rrwrite_src:begin
 				frm_ctl_d=0;
-				frm_data_d=	src_id_r;
+				frm_data_d=dest_id_r_q;
 				ns_rresp=rrwrite_data;
 			end
 			rrwrite_data:begin//actual data length
@@ -584,6 +584,7 @@ always @ (*)begin
 				ns_rresp=rrwrite_data_act;
 			end
 			rrwrite_data_act:begin	//actual data
+				frm_ctl_d=0;
 				if (w_shift==0) begin //take new 8 bytes
 					stopout_d=0;
 					dataw_d=dout;
@@ -728,6 +729,12 @@ always @ (posedge clk or posedge reset)begin
 		pushin_q<=0;
 		firstin_q<=0;
 		din_q<=0;
+		src_id_r_q<=0;
+		dest_id_r_q<=0;
+		swr_src_q<=  0;
+		swr_dest_q<= 0;
+		pwr_src_q<=  0;
+		pwr_dest_q<=  0;
 	end
 	else begin
 		packet_size<= #1 packet_size_d;
@@ -769,10 +776,13 @@ always @ (posedge clk or posedge reset)begin
 		pushin_q<= #1 pushin;
 		firstin_q<= #1 firstin;
 		din_q<= #1 din;
+		dest_id_r_q<= #1 dest_id_r;
+		src_id_r_q<= #1 src_id_r;
+		swr_src_q<= #1 swr_src;
+		swr_dest_q<= #1 swr_dest;
+		pwr_src_q<= #1 pwr_src;
+		pwr_dest_q<= #1 pwr_dest;
 	end
-	
-	
-	
 end
 
 endmodule

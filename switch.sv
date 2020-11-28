@@ -52,8 +52,7 @@ always @ (*)begin
 	delayctl1_d=delayctl;
 	
 	//return path is hardwired to box1
-	from.noc_from_dev_ctl=bi1.noc_from_dev_ctl;
-	from.noc_from_dev_data=bi1.noc_from_dev_data;
+	
 	
 	//state machine to sample the destination ID
 	case (ps_ds) 
@@ -93,21 +92,30 @@ always @ (*)begin
 		bi2.noc_to_dev_ctl=1;
 		bi2.noc_to_dev_data=0;
 		
+		//if (to.noc_to_dev_ctl) 
+		//	ns_dr=reset_dr;
+		
 		//give values to the selected dev
 		case(dest_id)
 		8'h40:begin
 			bi1.noc_to_dev_ctl=delayctl1;
 			bi1.noc_to_dev_data=delay1;
+			
+			//not added fifo
+			from.noc_from_dev_ctl=bi1.noc_from_dev_ctl;
+			from.noc_from_dev_data=bi1.noc_from_dev_data;
 		end
 		8'h41:begin
-			bi2.noc_to_dev_ctl=to.noc_to_dev_ctl;
-			bi2.noc_to_dev_data=to.noc_to_dev_data;
+			bi2.noc_to_dev_ctl=delayctl1;
+			bi2.noc_to_dev_data=delay1;
+			
+			//not added fifo
+			from.noc_from_dev_ctl=bi2.noc_from_dev_ctl;
+			from.noc_from_dev_data=bi2.noc_from_dev_data;
 		end
 		default :;
 		endcase
 		
-		if (to.noc_to_dev_ctl)
-			ns_dr=reset_dr;
 	end
 	default:;
 	endcase
