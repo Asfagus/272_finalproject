@@ -66,7 +66,6 @@ reg [3:0] addr_ctr,addr_ctr_d;
 //cmd 1
 reg [3:0] raddr_ctr,raddr_ctr_d;
 			
-			
 //8-byte max data read from tb;
 reg [7:0][7:0] datar,datar_d; 	//dataread
 //reg to count datar
@@ -566,7 +565,6 @@ always @ (*)begin
 				frm_ctl_d=1;
 				frm_data_d={2'b00,3'b000,3'b011};
 				ns_rresp=rrwrite_dest;
-				
 			end
 			rrwrite_dest:begin
 				frm_ctl_d=0;
@@ -644,12 +642,12 @@ always @ (*)begin
 				fwrite_dest:begin
 					
 					frm_ctl_d=0;
-					frm_data_d=dataout_d.d_id;
+					frm_data_d=dataout_d.s_id;
 					ns_fifo=fwrite_src;
 				end
 				fwrite_src:begin
 					frm_ctl_d=0;
-					frm_data_d=	dataout_d.s_id;
+					frm_data_d=	dataout_d.d_id;
 					ns_fifo=fwrite_addr;
 				end
 				fwrite_addr:begin

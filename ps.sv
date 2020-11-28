@@ -7,7 +7,6 @@ NOCI si (to.clk,to.reset);
 //instantiate module for switch
 switch s1 (si.TI,si.FO);
 
-
 //connect wires
 assign si.noc_to_dev_ctl=to.noc_to_dev_ctl;
 assign si.noc_to_dev_data=to.noc_to_dev_data;
