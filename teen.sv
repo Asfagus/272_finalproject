@@ -627,9 +627,26 @@ endtask : t11
 
 ps p(bif.TI,bif.FO);
 
+int count_40,count_41;
+
 initial begin
-//    repeat(1_000_000) @(posedge(clk));
-    $dumpfile("perm.vcd");
+	count_40=0;
+	count_41=0;
+	forever begin
+		@(posedge p.s1.b1.pushout)
+			count_40++;
+		
+		//@(posedge p.s1.b2.pushout)
+		//	count_41++;
+		
+		$display ("count40:%d,count41:%d",count_40,count_41);
+	end	
+end
+
+initial begin
+//    repeat(10_000_000) @(posedge(clk));
+	//repeat (1) @ (posedge p.s1.b2.pushout);
+	$dumpfile("perm.vcd");
     $dumpvars(9,top);
     repeat(100000) @(posedge(clk));
     #5;
