@@ -1,4 +1,6 @@
 `include "switch.sv"
+//uncomment for synth
+//`include "tb_intf.sv"
 module ps (NOCI.TI to,NOCI.FO from);
 
 //instantiate the interface for switch
@@ -12,6 +14,5 @@ assign si.noc_to_dev_ctl=to.noc_to_dev_ctl;
 assign si.noc_to_dev_data=to.noc_to_dev_data;
 assign from.noc_from_dev_ctl=si.noc_from_dev_ctl;
 assign from.noc_from_dev_data=si.noc_from_dev_data;
-
 
 endmodule

@@ -43,7 +43,7 @@ integer i;
 assign data_out = fifomem[tail];
 always @(posedge clk or posedge rstp) begin
    if (rstp == 1) begin
-      for(i=0;i<32;i=i+1)begin
+      for(i=0;i<MAX_COUNT;i=i+1)begin
 	fifomem[i] <= 0;	
       end
    end
@@ -98,7 +98,7 @@ always @(posedge clk) begin
                count <= #1 count - 1;
          2'b11:
             // Concurrent read and write.. no change in count
-            count <= #1 count;
+            count <= #1 count;	//changed to +1
       endcase
    end
 end

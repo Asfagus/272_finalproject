@@ -1,6 +1,8 @@
 `include "box.sv"
 `include "fifo.v"
 
+//device is not reading last byte 
+
 module switch (NOCI.TI to,NOCI.FO from);
 
 //Registers
@@ -19,6 +21,9 @@ enum reg [2:0] {reset_f40r,read_f40r}ps_f40r,ns_f40r;
 
 //enum for read data from dev 40 in fifo
 enum reg [2:0] {reset_f41r,read_f41r}ps_f41r,ns_f41r;
+
+//enum for round robin
+enum reg [2:0] {reset_rr,d40_rr,d41_rr}ps_rr,ns_rr;
 
 
 //ff to store cmd byte from noc_to_dev_data
@@ -45,6 +50,9 @@ reg [fifo_bitsize-1:0] din_f41;
 wire [fifo_bitsize-1:0] dout_f41;
 reg wen_f41,ren_f41;
 wire empty_f41,full_f41;
+
+//variable to tell if there is data in any fifo
+reg data_ready;
 
 //Instantiations
 
@@ -93,7 +101,8 @@ always @ (*)begin
 	ns_f41r=ps_f41r;
 	wen_f41=0;
 	ren_f41=0;
-	
+	data_ready=0;
+	ns_rr=ps_rr;
 	
 	//state machine to sample the destination ID
 	case (ps_ds) 
@@ -161,16 +170,16 @@ always @ (*)begin
 	//go to ns at start of new packet
 		if (bi1.noc_from_dev_ctl && bi1.noc_from_dev_data) begin
 			//store cmd byte
-			if (!full_f40)begin	
+			if (!full_f40&&!ren_f40)begin	
 				wen_f40=1;
 			 	din_f40={bi1.noc_from_dev_ctl,bi1.noc_from_dev_data};
 			 	ns_f40=store_f40;
 			end
-			else $display("tried to write cmd to f40 while full");
+			else $display("tried to write cmd to f40 while full or reading");
 		end
 	end
 	store_f40:begin
-		if (!full_f40) begin
+		if (!full_f40&&!ren_f40) begin
 			 if (!bi1.noc_from_dev_ctl) begin
 			 	// data other than NOP
 			 	wen_f40=1;
@@ -179,7 +188,8 @@ always @ (*)begin
 			 else if (bi1.noc_from_dev_ctl && !bi1.noc_from_dev_data)begin
 			 	//Nops
 			 	ns_f40=reset_f40;
-			 	wen_f40=0;
+			 	wen_f40=1;
+			 	din_f40={bi1.noc_from_dev_ctl,bi1.noc_from_dev_data};
 			 end
 			 else if (bi1.noc_from_dev_ctl && bi1.noc_from_dev_data)begin
 			 	wen_f40=1;
@@ -187,7 +197,10 @@ always @ (*)begin
 			 end
 			 
 		end
-		else $display("tried to write rem to f40 while full");
+		else begin
+		 	wen_f40=0;
+		 	$display("tried to write rem to f40 while full or reading");
+		end	
 	end
 	default:;
 	endcase
@@ -198,16 +211,16 @@ always @ (*)begin
 	//go to ns at start of new packet
 		if (bi2.noc_from_dev_ctl && bi2.noc_from_dev_data) begin
 			//store cmd byte
-			if (!full_f41)begin	
+			if (!full_f41&&!ren_f41)begin	
 				wen_f41=1;
 			 	din_f41={bi2.noc_from_dev_ctl,bi2.noc_from_dev_data};
 			 	ns_f41=store_f41;
 			end
-			else $display("tried to write cmd to f41 while full");
+			else $display("tried to write cmd to f41 while full or reading");
 		end
 	end
 	store_f41:begin
-		if (!full_f41) begin
+		if (!full_f41&&!ren_f41) begin
 			 if (!bi2.noc_from_dev_ctl) begin
 			 	// data other than NOP
 			 	wen_f41=1;
@@ -216,14 +229,18 @@ always @ (*)begin
 			 else if (bi2.noc_from_dev_ctl && !bi2.noc_from_dev_data)begin
 			 	//Nops
 			 	ns_f41=reset_f41;
-			 	wen_f41=0;
+			 	wen_f41=1;
+			 	din_f41={bi2.noc_from_dev_ctl,bi2.noc_from_dev_data};
 			 end
 			 else if (bi2.noc_from_dev_ctl && bi2.noc_from_dev_data)begin
 			 	wen_f41=1;
 			 	din_f41={bi2.noc_from_dev_ctl,bi2.noc_from_dev_data};
 			 end
 		end
-		else ;//$display("tried to write rem to f41 while full");
+		else begin
+		 	wen_f41=0;
+		 	$display("tried to write rem to f41 while full or reading");
+		end	
 	end
 	default:;
 	endcase
@@ -235,22 +252,38 @@ always @ (*)begin
 			ns_f40r=read_f40r;
 	end
 	read_f40r:begin
-	//give out data from both fifos
-		if(!empty_f40||!empty_f41)begin
-			if (dest_id==8'h40) begin	//temp way to respond for child
+		//round robin response logic
+		case (ps_rr)
+		reset_rr:begin
+			//greedy master
+			if (!empty_f40&&!wen_f40)
+				ns_rr=d40_rr;
+			else if(!empty_f41&&!wen_f41)
+				ns_rr=d41_rr;
+			
+			{from.noc_from_dev_ctl,from.noc_from_dev_data}={1,8'h0};	
+		end
+		d40_rr:begin
+			if (empty_f40)begin
+				ns_rr=reset_rr;
+				{from.noc_from_dev_ctl,from.noc_from_dev_data}={1,8'h0};
+			end
+			else begin
 				ren_f40=1;
 				{from.noc_from_dev_ctl,from.noc_from_dev_data}=	dout_f40;
 			end
-			if (dest_id==8'h41) begin	//temp way to respond for child
-				ren_f41=1;
-				{from.noc_from_dev_ctl,from.noc_from_dev_data}=	dout_f41;
-			end
+		end
+		d41_rr:begin
+			ren_f41=1;
+			{from.noc_from_dev_ctl,from.noc_from_dev_data}=	dout_f41;
 		
+			if (empty_f41) begin
+				ns_rr=reset_rr;
+				{from.noc_from_dev_ctl,from.noc_from_dev_data}={1,8'h0};
+			end
 		end
-		else if(empty_f40||empty_f41) begin
-			ns_f40r=reset_f40r;
-			{from.noc_from_dev_ctl,from.noc_from_dev_data}={1,8'h0};
-		end
+		default :;
+		endcase
 	end
 	default :;
 	endcase
@@ -271,6 +304,8 @@ always @ (posedge to.clk or posedge to.reset) begin
 		ps_f40r<=reset_f40r;
 		ps_f41<=reset_f41;
 		ps_f41r<=reset_f41r;
+		ps_rr<=reset_rr;
+		
 	end
 	else begin
 		ps_ds<= #1 ns_ds;
@@ -285,6 +320,7 @@ always @ (posedge to.clk or posedge to.reset) begin
 		ps_f40r<= #1 ns_f40r;
 		ps_f41<= #1 ns_f41;
 		ps_f41r<= #1 ns_f41r;
+		ps_rr<= #1 ns_rr;
 	end
 end
 endmodule
