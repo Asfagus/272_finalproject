@@ -127,7 +127,19 @@ always @ (*)begin
 	ren_f43=0;
 	ns_f42=ps_f42;
 	ns_f43=ps_f43;
-	
+	din_f40=0;
+	din_f41=0;
+	din_f42=0;
+	din_f43=0;
+	bi1.noc_to_dev_ctl=0;
+	bi1.noc_to_dev_data=0;
+	bi2.noc_to_dev_ctl=0;
+	bi2.noc_to_dev_data=0;
+	bi3.noc_to_dev_ctl=0;
+	bi3.noc_to_dev_data=0;
+	bi4.noc_to_dev_ctl=0;
+	bi4.noc_to_dev_data=0;
+	{from.noc_from_dev_ctl,from.noc_from_dev_data}={1,8'h0};
 	//state machine to sample the destination ID
 	case (ps_ds) 
 	reset_ds: begin

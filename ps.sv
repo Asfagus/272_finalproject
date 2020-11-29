@@ -1,6 +1,6 @@
 `include "switch.sv"
 //uncomment for synth
-//`include "tb_intf.sv"
+`include "tb_intf.sv"
 module ps (NOCI.TI to,NOCI.FO from);
 
 //instantiate the interface for switch
