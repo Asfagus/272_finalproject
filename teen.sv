@@ -634,7 +634,7 @@ initial begin
 	forever begin
 		@(posedge p.s1.b1.pushout)
 			count_40++;
-		//$display ("count40:%d",count_40);
+		$display ("count40:%d",count_40);
 	end	
 end
 
@@ -643,14 +643,14 @@ initial begin
 	forever begin
 		@(posedge p.s1.b2.pushout)
 			count_41++;
-		//$display ("count41:%d",count_41);
+		$display ("count41:%d",count_41);
 	end	
 end
 
 
 initial begin
-//    repeat(10_000_000) @(posedge(clk));
-	repeat (282) @ (posedge p.s1.b2.pushout);
+    repeat(10_000_000) @(posedge(clk));	//this is a blank wait statement
+	//repeat (282) @ (posedge p.s1.b2.pushout);
 	$dumpfile("perm.vcd");
     $dumpvars(0);
     repeat(100000) @(posedge(clk));

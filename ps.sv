@@ -1,8 +1,12 @@
 `include "switch.sv"
-//uncomment for synth
-`include "tb_intf.sv"
+//uncomment for synthesis, comment for vcs
+//`include "tb_intf.sv"
 module ps (NOCI.TI to,NOCI.FO from);
 
+wire clk,reset;
+
+//assign clk=to.clk;
+//assign reset=to.reset;
 //instantiate the interface for switch
 NOCI si (to.clk,to.reset);
 

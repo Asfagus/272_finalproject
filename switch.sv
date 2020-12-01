@@ -42,21 +42,21 @@ reg [7:0]delay,delay_d,delay1,delay1_d;
 reg delayctl,delayctl_d,delayctl1,delayctl1_d;
 
 //fifo 40 regs
-parameter depth=8,fifo_bitsize=9;
-reg [fifo_bitsize-1:0] din_f40;
-wire [fifo_bitsize-1:0] dout_f40;
+//parameter depth=8,9=9;
+reg [9-1:0] din_f40;
+wire [9-1:0] dout_f40;
 reg wen_f40,ren_f40;
 wire empty_f40,full_f40;
 
 //fifo 41 regs
-reg [fifo_bitsize-1:0] din_f41;
-wire [fifo_bitsize-1:0] dout_f41;
+reg [9-1:0] din_f41;
+wire [9-1:0] dout_f41;
 reg wen_f41,ren_f41;
 wire empty_f41,full_f41;
 
 //fifo 42,43 regs
-reg [fifo_bitsize-1:0] din_f42,din_f43;
-wire [fifo_bitsize-1:0] dout_f42,dout_f43;
+reg [9-1:0] din_f42,din_f43;
+wire [9-1:0] dout_f42,dout_f43;
 reg wen_f42,ren_f42,wen_f43,ren_f43;
 wire empty_f42,full_f42,empty_f43,full_f43;
 
@@ -85,10 +85,10 @@ NOCI bi4 (to.clk, to.reset);
 box b4 (bi4.TI,bi4.FO);
 
 //instantiating fifo for storing from data from device 40
-fifo #(depth,fifo_bitsize) f_40 (to.clk,to.reset,din_f40,wen_f40,ren_f40,dout_f40,empty_f40,full_f40);
-fifo #(depth,fifo_bitsize) f_41 (to.clk,to.reset,din_f41,wen_f41,ren_f41,dout_f41,empty_f41,full_f41);
-fifo #(depth,fifo_bitsize) f_42 (to.clk,to.reset,din_f42,wen_f42,ren_f42,dout_f42,empty_f42,full_f42);
-fifo #(depth,fifo_bitsize) f_43 (to.clk,to.reset,din_f43,wen_f43,ren_f43,dout_f43,empty_f43,full_f43);
+fifo f_40 (to.clk,to.reset,din_f40,wen_f40,ren_f40,dout_f40,empty_f40,full_f40);
+fifo f_41 (to.clk,to.reset,din_f41,wen_f41,ren_f41,dout_f41,empty_f41,full_f41);
+fifo f_42 (to.clk,to.reset,din_f42,wen_f42,ren_f42,dout_f42,empty_f42,full_f42);
+fifo f_43 (to.clk,to.reset,din_f43,wen_f43,ren_f43,dout_f43,empty_f43,full_f43);
 
 
 always @ (*)begin
