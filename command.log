@@ -1,6 +1,6 @@
 #@ # 
 #@ # Running dc_shell Version K-2015.06-SP5-1 for linux64 -- Feb 26, 2016
-#@ # Date:   Mon Nov 30 22:43:53 2020
+#@ # Date:   Tue Dec  1 20:46:25 2020
 #@ # Run by: 01453855@coe-ee-cad4.sjsuad.sjsu.edu
 #@ 
 
@@ -3800,30 +3800,219 @@ source /apps/synopsys/SYNTH/admin/setup/.synopsys_dc.setup
 #@ }
 #@ # -- End source /apps/synopsys/SYNTH/admin/setup/.synopsys_dc.setup
 
-source -echo -verbose /home/014538550/272/finalproject/synthesis.script
-#@ # -- Starting source /home/014538550/272/finalproject/synthesis.script
+gui_start
+#@ # -- Starting source /apps/synopsys/SYNTH/auxx/tcllib/lib/itk3.4/itk.tcl
 
-#@ set link_library {/apps/toshiba/sjsu/synopsys/tc240c/tc240c.db_NOMIN25 /apps/synopsys/I-2013.12-SP5/libraries/syn/dw_foundation.sldb}
-#@ set target_library {/apps/toshiba/sjsu/synopsys/tc240c/tc240c.db_NOMIN25}
-#@ read_sverilog ps.sv
-#@ current_design ps
-#@ create_clock to.clk -name to.clk -period 3.4875000000000003
-#@ set_propagated_clock to.clk
-#@ set_clock_uncertainty 0.25 to.clk
-#@ set_propagated_clock to.clk
-#@ set_output_delay 0.5 -clock to.clk [all_outputs]
-#@ set all_inputs_wo_rst_to.clk [remove_from_collection [remove_from_collection [all_inputs] [get_port to.clk]] [get_port to.reset]]
-#@ set_driving_cell -lib_cell CND2X1 $all_inputs_wo_rst_to.clk
-#@ set_input_delay 0.6 -clock to.clk $all_inputs_wo_rst_to.clk
-#@ set_output_delay 0.6 -clock to.clk [all_outputs]
-#@ set_fix_hold [ get_clocks to.clk ]
-#@ set_host_options -max_cores 4
-#@ set_output_delay 0.3 -clock to.clk [all_outputs]
-#@ set_max_delay 3.255 -from [all_inputs] -to [all_outputs]
-#@ compile_ultra
-#@ create_clock to.clk -name to.clk -period 4.65
+#@ #
+#@ # itk.tcl
+#@ # ----------------------------------------------------------------------
+#@ # Invoked automatically upon startup to customize the interpreter
+#@ # for [incr Tk].
+#@ # ----------------------------------------------------------------------
+#@ #   AUTHOR:  Michael J. McLennan
+#@ #            Bell Labs Innovations for Lucent Technologies
+#@ #            mmclennan@lucent.com
+#@ #            http://www.tcltk.com/itcl
+#@ #
+#@ #      RCS:  $Id: itk.tcl,v 1.3 2002/05/14 22:53:28 davygrvy Exp $
+#@ # ----------------------------------------------------------------------
+#@ #            Copyright (c) 1993-1998  Lucent Technologies, Inc.
+#@ # ======================================================================
+#@ # See the file "license.terms" for information on usage and
+#@ # redistribution of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 #@ 
-#@ update_timing
-#@ report_timing -max_paths 5
-#@ write -hierarchy -format verilog -output perm_gates.v
-#@ quit
+#@ #
+#@ # Provide transparent access to all [incr Tk] commands
+#@ #
+#@ if {$tcl_platform(os) == "MacOS"} {
+#@     source -rsrc itk:tclIndex
+#@ } else {
+#@     lappend auto_path ${itk::library}
+#@ }
+#@ 
+#@ # ----------------------------------------------------------------------
+#@ #  USAGE:  itk::remove_destroy_hook <widget>
+#@ #
+#@ #  Used internally via "itk_component delete" when disconnecting a
+#@ #  component <widget> from the mega-widget that contains it.
+#@ #  Each component has a special binding for the <Destroy> event
+#@ #  that causes it to disconnect itself from its parent when destroyed.
+#@ #  This procedure removes the binding from the binding tag list and
+#@ #  deletes the binding.  It is much easier to implement this in
+#@ #  Tcl than C.
+#@ # ----------------------------------------------------------------------
+#@ proc ::itk::remove_destroy_hook {widget} {
+#@     if {![winfo exists $widget]} {return}
+#@     set tags [bindtags $widget]
+#@     set i [lsearch $tags "itk-destroy-$widget"]
+#@     if {$i >= 0} {
+#@         bindtags $widget [lreplace $tags $i $i]
+#@     }
+#@     bind itk-destroy-$widget <Destroy> {}
+#@ }
+#@ 
+#@ #
+#@ # Define "usual" option-handling code for the Tk widgets:
+#@ #
+#@ itk::usual Button {
+#@     keep -background -cursor -foreground -font
+#@     keep -activebackground -activeforeground -disabledforeground
+#@     keep -highlightcolor -highlightthickness
+#@     rename -highlightbackground -background background Background
+#@ }
+#@ 
+#@ itk::usual Canvas {
+#@     keep -background -cursor
+#@     keep -insertbackground -insertborderwidth -insertwidth
+#@     keep -insertontime -insertofftime
+#@     keep -selectbackground -selectborderwidth -selectforeground
+#@     keep -highlightcolor -highlightthickness
+#@     rename -highlightbackground -background background Background
+#@ }
+#@ 
+#@ itk::usual Checkbutton {
+#@     keep -background -cursor -foreground -font
+#@     keep -activebackground -activeforeground -disabledforeground
+#@     keep -selectcolor
+#@     keep -highlightcolor -highlightthickness
+#@     rename -highlightbackground -background background Background
+#@ }
+#@ 
+#@ itk::usual Entry {
+#@     keep -background -cursor -foreground -font
+#@     keep -insertbackground -insertborderwidth -insertwidth
+#@     keep -insertontime -insertofftime
+#@     keep -selectbackground -selectborderwidth -selectforeground
+#@     keep -highlightcolor -highlightthickness
+#@     rename -highlightbackground -background background Background
+#@ }
+#@ 
+#@ itk::usual Frame {
+#@     keep -background -cursor
+#@ }
+#@ 
+#@ itk::usual Label {
+#@     keep -background -cursor -foreground -font
+#@     keep -highlightcolor -highlightthickness
+#@     rename -highlightbackground -background background Background
+#@ }
+#@ 
+#@ itk::usual Listbox {
+#@     keep -background -cursor -foreground -font
+#@     keep -selectbackground -selectborderwidth -selectforeground
+#@     keep -highlightcolor -highlightthickness
+#@     rename -highlightbackground -background background Background
+#@ }
+#@ 
+#@ itk::usual Menu {
+#@     keep -background -cursor -foreground -font
+#@     keep -activebackground -activeforeground -disabledforeground
+#@     keep -selectcolor -tearoff
+#@ }
+#@ 
+#@ itk::usual Menubutton {
+#@     keep -background -cursor -foreground -font
+#@     keep -activebackground -activeforeground -disabledforeground
+#@     keep -highlightcolor -highlightthickness
+#@     rename -highlightbackground -background background Background
+#@ }
+#@ 
+#@ itk::usual Message {
+#@     keep -background -cursor -foreground -font
+#@     keep -highlightcolor -highlightthickness
+#@     rename -highlightbackground -background background Background
+#@ }
+#@ 
+#@ itk::usual Radiobutton {
+#@     keep -background -cursor -foreground -font
+#@     keep -activebackground -activeforeground -disabledforeground
+#@     keep -selectcolor
+#@     keep -highlightcolor -highlightthickness
+#@     rename -highlightbackground -background background Background
+#@ }
+#@ 
+#@ itk::usual Scale {
+#@     keep -background -cursor -foreground -font -troughcolor
+#@     keep -activebackground
+#@     keep -highlightcolor -highlightthickness
+#@     rename -highlightbackground -background background Background
+#@ }
+#@ 
+#@ itk::usual Scrollbar {
+#@     keep -background -cursor -troughcolor
+#@     keep -activebackground -activerelief
+#@     keep -highlightcolor -highlightthickness
+#@     rename -highlightbackground -background background Background
+#@ }
+#@ 
+#@ itk::usual Text {
+#@     keep -background -cursor -foreground -font
+#@     keep -insertbackground -insertborderwidth -insertwidth
+#@     keep -insertontime -insertofftime
+#@     keep -selectbackground -selectborderwidth -selectforeground
+#@     keep -highlightcolor -highlightthickness
+#@     rename -highlightbackground -background background Background
+#@ }
+#@ 
+#@ itk::usual Toplevel {
+#@     keep -background -cursor
+#@ }
+#@ # -- End source /apps/synopsys/SYNTH/auxx/tcllib/lib/itk3.4/itk.tcl
+
+#@ # -- Starting source /apps/synopsys/SYNTH/auxx/tcllib/lib/iwidgets4.0.2/lib/iwidgets/iwidgets.tcl
+
+#@ #
+#@ # iwidgets.tcl
+#@ # ----------------------------------------------------------------------
+#@ # Invoked automatically by [incr Tk] upon startup to initialize
+#@ # the [incr Widgets] package.
+#@ # ----------------------------------------------------------------------
+#@ #  AUTHOR: Mark L. Ulferts               EMAIL: mulferts@spd.dsccc.com
+#@ #
+#@ #  @(#) $Id: iwidgets.tcl.in,v 1.5 2007/06/10 19:28:16 hobbs Exp $
+#@ # ----------------------------------------------------------------------
+#@ #                Copyright (c) 1995  Mark L. Ulferts
+#@ # ======================================================================
+#@ # See the file "license.terms" for information on usage and
+#@ # redistribution of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+#@ 
+#@ package require Tcl 8.0
+#@ package require Tk 8.0
+#@ package require Itcl 3.2
+#@ package require Itk 3.2
+#@ 
+#@ namespace eval ::iwidgets {
+#@     namespace export *
+#@ 
+#@     variable library [file dirname [info script]]
+#@     variable version 4.0.2
+#@ 
+#@     lappend auto_path $iwidgets::library
+#@     variable subdir
+#@     foreach subdir {generic scripts} {
+#@ 	if {[file isdirectory [file join $iwidgets::library $subdir]]} {
+#@ 	    lappend auto_path [file join $iwidgets::library $subdir]
+#@ 	}
+#@     }
+#@     unset subdir
+#@ }
+#@ 
+#@ package provide Iwidgets $iwidgets::version
+#@ # -- End source /apps/synopsys/SYNTH/auxx/tcllib/lib/iwidgets4.0.2/lib/iwidgets/iwidgets.tcl
+
+read_file -format sverilog {/home/014538550/272/finalproject/ps.sv}
+change_selection [get_s perm_blk]
+change_selection [get_s perm_blk]
+change_selection [get_s perm_blk]
+current_design ps
+change_selection [get_s ps]
+change_selection [get_s ps]
+change_selection [get_s s1]
+change_selection [get_s ps]
+change_selection [get_s s1]
+change_selection [get_s ps]
+change_selection 
+change_selection [get_s s1]
+gui_zoom -window [gui_get_current_window -view] -full
+change_selection [get_s s1/C1151]
+change_selection [get_s s1/C1198]

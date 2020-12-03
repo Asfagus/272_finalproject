@@ -1,6 +1,6 @@
 `include "box.sv"
 `include "fifo.v"
-
+`include "pri_rr_arb.sv"
 //remove later
 
 module switch (NOCI.TI to,NOCI.FO from);
@@ -28,6 +28,10 @@ enum reg [2:0] {reset_f41r,read_f41r}ps_f41r,ns_f41r;	//remove later
 
 //enum for round robin
 enum reg [2:0] {reset_rr,d40_rr,d41_rr,d42_rr,d43_rr}ps_rr,ns_rr;
+
+//enum for round robin arbiter
+enum reg [2:0] {reset_arb,check_arb,checkhp_arb,decide_arb}ps_arb,ns_arb;
+
 
 //ff to store cmd byte from noc_to_dev_data
 reg [7:0] cmd,cmd_d;
@@ -63,6 +67,24 @@ wire empty_f42,full_f42,empty_f43,full_f43;
 //variable to tell if there is data in any fifo
 reg data_ready;
 
+//req grant for read responses
+reg [3:0] req_hp,req_hp_d,grant_hp,grant_hp_d;
+
+//req grant for remaining responses
+reg [3:0] req_lp,req_lp_d,grant_lp,grant_lp_d;
+
+//grant for final arb output
+reg [3:0] grant_out,grant_out_d;
+
+//regs for checking if read resp exists in device
+reg rr40_exists,rr40_exists_d,rr41_exists,rr41_exists_d;
+reg rr42_exists,rr42_exists_d,rr43_exists,rr43_exists_d;
+
+//give arbiter slower clk or else it does bad syncing lockup only to one device
+reg arb_clk;
+
+//add variables for checking length of the read resp
+
 //Instantiations
 
 //selected interface for to 
@@ -90,6 +112,9 @@ fifo f_41 (to.clk,to.reset,din_f41,wen_f41,ren_f41,dout_f41,empty_f41,full_f41);
 fifo f_42 (to.clk,to.reset,din_f42,wen_f42,ren_f42,dout_f42,empty_f42,full_f42);
 fifo f_43 (to.clk,to.reset,din_f43,wen_f43,ren_f43,dout_f43,empty_f43,full_f43);
 
+//instantiating priority RR arb for High (Read resp) and Low priority (remaining resp) reqs
+arb a_hp (arb_clk,to.reset,req_hp,grant_hp);
+arb a_lp (arb_clk,to.reset,req_lp,grant_lp);
 
 always @ (*)begin
 	ns_ds=ps_ds;
@@ -140,6 +165,18 @@ always @ (*)begin
 	bi4.noc_to_dev_ctl=0;
 	bi4.noc_to_dev_data=0;
 	{from.noc_from_dev_ctl,from.noc_from_dev_data}={1,8'h0};
+	
+	//arb sm and other req grant regs
+	ns_arb=ps_arb;
+	grant_out_d=grant_out;
+	rr40_exists_d=rr40_exists;
+	rr41_exists_d=rr41_exists;
+	rr42_exists_d=rr42_exists;
+	rr43_exists_d=rr43_exists;
+	req_lp_d=req_lp;
+	req_hp_d=req_hp;
+	arb_clk=0;
+	
 	//state machine to sample the destination ID
 	case (ps_ds) 
 	reset_ds: begin
@@ -213,6 +250,11 @@ always @ (*)begin
 				wen_f40=1;
 			 	din_f40={bi1.noc_from_dev_ctl,bi1.noc_from_dev_data};
 			 	ns_f40=store_f40;
+			 	
+			 	//check if cmd has read resp
+				if (din_f40[2:0]==3'b011)	
+					rr40_exists_d=1;
+			 	
 			end
 			else $display("tried to write cmd to f40 while full or reading");
 		end
@@ -254,6 +296,10 @@ always @ (*)begin
 				wen_f41=1;
 			 	din_f41={bi2.noc_from_dev_ctl,bi2.noc_from_dev_data};
 			 	ns_f41=store_f41;
+			 	
+			//check if cmd has read resp
+			if (din_f41[2:0]==3'b011)	
+				rr41_exists_d=1;
 			end
 			else $display("tried to write cmd to f41 while full or reading");
 		end
@@ -294,6 +340,10 @@ always @ (*)begin
 				wen_f42=1;
 			 	din_f42={bi3.noc_from_dev_ctl,bi3.noc_from_dev_data};
 			 	ns_f42=store_f42;
+			 	
+			 //check if cmd has read resp
+			if (din_f41[2:0]==3'b011)	
+				rr42_exists_d=1;
 			end
 			else $display("tried to write cmd to f42 while full or reading");
 		end
@@ -335,6 +385,11 @@ always @ (*)begin
 				wen_f43=1;
 			 	din_f43={bi4.noc_from_dev_ctl,bi4.noc_from_dev_data};
 			 	ns_f43=store_f43;
+			 
+			 //check if cmd has read resp
+			if (din_f41[2:0]==3'b011)	
+				rr43_exists_d=1;
+				
 			end
 			else $display("tried to write cmd to f43 while full or reading");
 		end
@@ -368,26 +423,33 @@ always @ (*)begin
 	//sm for reading data from fifo dev40 and dev41 and dev42 and dev 43
 	case (ps_f40r)
 	reset_f40r:begin
-		if(!empty_f40 ||!empty_f41)
+		if(!empty_f40 ||!empty_f41||!empty_f42||!empty_f43)
 			ns_f40r=read_f40r;
+			
 	end
 	read_f40r:begin
 		//round robin response logic
 		case (ps_rr)
 		reset_rr:begin
-			//greedy master
-			if (!empty_f40&&!wen_f40)
+			//added PRR arbitration scheme and removed greedy master
+			if (grant_out==4'b1000) begin
 				ns_rr=d40_rr;
-			else if(!empty_f41&&!wen_f41)
+			end
+			else if(grant_out==4'b0100) begin
 				ns_rr=d41_rr;
-			else if (!empty_f42&&!wen_f42)
+			end
+			else if (grant_out==4'b0010) begin
 				ns_rr=d42_rr;
-			else if(!empty_f43&&!wen_f43)
+			end
+			else if(grant_out==4'b0001) begin
 				ns_rr=d43_rr;
+			end
+			else ;//$display ("noone was granted");
 			
 			{from.noc_from_dev_ctl,from.noc_from_dev_data}={1,8'h0};	
 		end
 		d40_rr:begin
+			//this logic empties the fifo fully before going to reset
 			if (empty_f40)begin
 				ns_rr=reset_rr;
 				{from.noc_from_dev_ctl,from.noc_from_dev_data}={1,8'h0};
@@ -432,6 +494,113 @@ always @ (*)begin
 	end
 	default :;
 	endcase
+	
+	//sm to manage arbitration and select grant_out
+	case (ps_arb)
+	reset_arb:begin
+		//default grant out is 0
+		//commenting for now
+		//grant_out_d=0;
+		
+		//if rr exists, then next is check arb or else check lp_arb
+			
+			ns_arb=check_arb;
+	
+	end
+	check_arb:begin
+		//here we check arb for low priority
+		
+		//in the 4 bit request lines: device 40 is 8, device 41 is 4, device 42 is 2, device 43 is 1
+		
+		//req lp for dev 40
+		if (!empty_f40 && rr40_exists==0) begin
+			req_lp_d[3]=1'b1;
+		end
+		else if (rr40_exists)
+			;//$display("read resp arrived for dev 40");
+		else ;//$display ("dev 40 fifo empty");
+	
+		//req lp for dev 41
+		if (!empty_f41 && rr41_exists==0) begin
+			req_lp_d[2]=1'b1;
+		end
+		else if (rr41_exists)
+			;//$display("read resp arrived for dev 41");
+		else ;//$display ("dev 41 fifo empty");
+		
+		//req lp for dev 42
+		if (!empty_f42 && rr42_exists==0) begin
+			req_lp_d[1]=1'b1;
+		end
+		else if (rr42_exists)
+			;//$display("read resp arrived for dev 42");
+		else ;//$display ("dev 42 fifo empty");
+		
+		//req lp for dev 43
+		if (!empty_f43 && rr43_exists==0) begin
+			req_lp_d[0]=1'b1;
+		end
+		else if (rr43_exists)
+			;//$display("read resp arrived for dev 43");
+		else ;//$display ("dev 43 fifo empty");
+	
+		ns_arb=checkhp_arb;
+	end
+	checkhp_arb:begin
+		//checks if read response exists to req high priority grant
+		//only works with one read resp at a time
+		//check if not greedy
+		if (rr40_exists)begin
+			req_hp_d[3]=1;
+		end
+		if (rr41_exists)begin
+			req_hp_d[2]=1;
+		end
+		if (rr42_exists)begin
+			req_hp_d[1]=1;
+		end
+		if (rr43_exists)begin
+			req_hp_d[0]=1;
+		end
+		ns_arb=decide_arb;
+	end
+	decide_arb:begin
+		//decide if lp or hp wins
+		ns_arb=reset_arb;
+
+		if (req_hp==0) begin
+			grant_out_d=grant_lp;
+			//clear specific req signal
+			req_lp_d[grant_lp]=0;
+		end
+		else begin
+			grant_out_d=grant_hp;
+			//clear req signal 
+			
+			//clear read resp_exists signal
+			//this logic treats read resp exists signals individually, not in a 200 byte set
+			
+			if (grant_hp==8) begin
+				rr40_exists_d=0;
+				req_hp_d[3]=0;
+			end
+			if (grant_hp==4) begin
+				rr41_exists_d=0;
+				req_hp_d[2]=0;
+			end
+			if (grant_hp==2) begin
+				rr42_exists_d=0;
+				req_hp_d[1]=0;
+			end
+			if (grant_hp==1) begin
+				rr43_exists_d=0;
+				req_hp_d[0]=0;
+			end
+		end
+		
+		arb_clk=!arb_clk;
+	end
+	endcase
 
 end
 
@@ -452,6 +621,15 @@ always @ (posedge to.clk or posedge to.reset) begin
 		ps_rr<=reset_rr;
 		ps_f42<=reset_f42;
 		ps_f43<=reset_f43;
+		ps_arb<=reset_arb;
+		grant_out<=0;
+		rr40_exists<=0;
+		rr41_exists<=0;
+		rr42_exists<=0;
+		rr43_exists<=0;
+		req_lp<=0;
+		req_hp<=0;
+		
 	end
 	else begin
 		ps_ds<= #1 ns_ds;
@@ -469,6 +647,14 @@ always @ (posedge to.clk or posedge to.reset) begin
 		ps_rr<= #1 ns_rr;
 		ps_f42<= #1 ns_f42;
 		ps_f43<= #1 ns_f43;
+		ps_arb<= #1 ns_arb;
+		grant_out<= #1 grant_out_d;
+		rr40_exists<= #1 rr40_exists_d;
+		rr41_exists<= #1 rr41_exists_d;
+		rr42_exists<= #1 rr42_exists_d;
+		rr43_exists<= #1 rr43_exists_d;
+		req_lp<= #1 req_lp_d;
+		req_hp<= #1 req_hp_d;
 	end
 end
 endmodule

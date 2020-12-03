@@ -2,7 +2,7 @@
 //
 `timescale 1ns/10ps
 
-`include "tb_intf.sv"
+//`include "tb_intf.sv"
 `include "ps.sv"
 
 
@@ -994,7 +994,7 @@ initial begin
 	forever begin
 		@(posedge p.s1.b1.pushout)
 			count_40++;
-		//$display ("count40:%d",count_40);
+		$display ("pushout count40:%d",count_40);
 	end	
 end
 
@@ -1003,7 +1003,7 @@ initial begin
 	forever begin
 		@(posedge p.s1.b2.pushout)
 			count_41++;
-		//$display ("count41:%d",count_41);
+		$display ("pushout count41:%d",count_41);
 	end	
 end
 
@@ -1012,7 +1012,7 @@ initial begin
 	forever begin
 		@(posedge p.s1.b3.pushout)
 			count_42++;
-		//$display ("count42:%d",count_42);
+		$display ("pushout count42:%d",count_42);
 	end	
 end
 
@@ -1021,7 +1021,7 @@ initial begin
 	forever begin
 		@(posedge p.s1.b4.pushout)
 			count_43++;
-		//$display ("count43:%d",count_43);
+		$display ("pushout count43:%d",count_43);
 	end	
 end
 
@@ -1033,7 +1033,10 @@ initial begin
     repeat(100000) @(posedge(clk));
     #5;
     $dumpoff;
-
+	
+	//add temp finish statement for atleast 25 pushouts
+	//$display("finishing abruptly");
+	//$finish;
 end
 
 endmodule : top

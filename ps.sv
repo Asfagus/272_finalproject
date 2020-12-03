@@ -1,6 +1,6 @@
 `include "switch.sv"
 //uncomment for synthesis, comment for vcs
-//`include "tb_intf.sv"
+`include "tb_intf.sv"
 module ps (NOCI.TI to,NOCI.FO from);
 
 wire clk,reset;
