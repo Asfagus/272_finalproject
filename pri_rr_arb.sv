@@ -1,48 +1,55 @@
-// An arbitration module 
-// This one does priority arbitration
+module arb (
+	input clk,rst,
+	input [3:0]req,
+	output reg [3:0] gnt
+);
 
-module arb(input reg clk, input reg reset, input reg [3:0] req,
-	output reg[3:0] grant);
-reg [3:0] int_grant,int_grant_d;
-reg [1:0] last,last_d;
-reg [7:0] pri_in;
-reg [3:0] rot_pri;
-reg [1:0] rot_winner,act_winner;
+reg [3:0] gnt_d;
+reg [7:0] pri;
+reg [3:0] pri_rot;
+reg [1:0] prev_win,prev_win_d,winner, winner_act;
+
 reg request;
-// combinational logic
-always @(*) begin
-	int_grant_d=0;
-	last_d=last;
-	grant=int_grant;
-	pri_in={req,4'h0};
-	pri_in>>=last;
-	rot_pri=pri_in[3:0]|pri_in[7:4];
-	// Now we have rotated priorities...
-	request= rot_pri!=0;
-	rot_winner=0;
-	case(1)
-		rot_pri[0]: rot_winner=0;
-		rot_pri[1]: rot_winner=1;
-		rot_pri[2]: rot_winner=2;
-		rot_pri[3]: rot_winner=3;
+
+
+always @ (*)begin
+	gnt_d=gnt;
+	prev_win_d=prev_win;
+	pri={req,4'h0};
+	pri>>=prev_win;
+	pri_rot=pri[3:0]|pri[7:4];
+	
+	request=pri_rot!=0;
+	winner=0;
+	case (1'b1)
+		pri_rot[0]: winner=0;
+		pri_rot[1]: winner=1;
+		pri_rot[2]: winner=2;
+		pri_rot[3]: winner=3;
 	endcase
-	act_winner=rot_winner+last;
-	if(request) begin
-		int_grant_d=1<<act_winner;
-		last_d=act_winner+1;
+	winner_act=winner+prev_win;
+	
+	if (request) begin
+		gnt_d=1<<winner_act;
+		prev_win_d=winner_act+1;
+	end
+	
+	//modify to give 0 grant if no req
+	if(req==0)
+		gnt_d=0;
+end
+
+
+always @ (posedge clk or posedge rst)begin
+	if (rst)begin
+	gnt<=0;
+	prev_win<=0;
+	end
+	else begin
+	gnt<= #1 gnt_d;
+	prev_win<= #1 prev_win_d;
 	end
 end
 
-// ffs
-always @(posedge(clk) or posedge(reset)) begin
-	if(reset) begin
-		int_grant <= 0;
-		last<=0;
-	end else begin
-		int_grant <= #1 int_grant_d;
-		last<= #1 last_d;
-	end
-end	
-	
-	
-endmodule : arb
+
+endmodule

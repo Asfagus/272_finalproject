@@ -36,8 +36,8 @@ enum reg [2:0] {reset_arb,check_arb,checkhp_arb,decide_arb}ps_arb,ns_arb;
 //ff to store cmd byte from noc_to_dev_data
 reg [7:0] cmd,cmd_d;
 
-//destination ID 40,41,42,43
-reg [7:0] dest_id_d,dest_id;
+//destination ID 40,41,42,43 for input and output
+reg [7:0] dest_id_d,dest_id,dest_id_out,dest_id_out_d;
 
 //delay to.noc_to_dev_data two cycles
 reg [7:0]delay,delay_d,delay1,delay1_d;
@@ -176,7 +176,7 @@ always @ (*)begin
 	req_lp_d=req_lp;
 	req_hp_d=req_hp;
 	arb_clk=0;
-	
+	dest_id_out_d=dest_id_out;
 	//state machine to sample the destination ID
 	case (ps_ds) 
 	reset_ds: begin
@@ -342,7 +342,7 @@ always @ (*)begin
 			 	ns_f42=store_f42;
 			 	
 			 //check if cmd has read resp
-			if (din_f41[2:0]==3'b011)	
+			if (din_f42[2:0]==3'b011)	
 				rr42_exists_d=1;
 			end
 			else $display("tried to write cmd to f42 while full or reading");
@@ -369,7 +369,7 @@ always @ (*)begin
 		end
 		else begin
 		 	wen_f42=0;
-		 	;//$display("tried to write rem to f42 while full or reading");
+		 	$display("tried to write rem to f42 while full or reading");
 		end	
 	end
 	default:;
@@ -387,7 +387,7 @@ always @ (*)begin
 			 	ns_f43=store_f43;
 			 
 			 //check if cmd has read resp
-			if (din_f41[2:0]==3'b011)	
+			if (din_f43[2:0]==3'b011)	
 				rr43_exists_d=1;
 				
 			end
@@ -414,7 +414,7 @@ always @ (*)begin
 		end
 		else begin
 		 	wen_f43=0;
-		 	;//$display("tried to write rem to f43 while full or reading");
+		 	$display("tried to write rem to f43 while full or reading");
 		end	
 	end
 	default:;
@@ -447,6 +447,7 @@ always @ (*)begin
 			else ;//$display ("noone was granted");
 			
 			{from.noc_from_dev_ctl,from.noc_from_dev_data}={1,8'h0};	
+			dest_id_out_d=dest_id_out;	//actually its 0 here
 		end
 		d40_rr:begin
 			//this logic empties the fifo fully before going to reset
@@ -458,6 +459,7 @@ always @ (*)begin
 				ren_f40=1;
 				{from.noc_from_dev_ctl,from.noc_from_dev_data}=	dout_f40;
 			end
+			dest_id_out_d=8'h40;
 		end
 		d41_rr:begin
 			if (empty_f41) begin
@@ -468,6 +470,7 @@ always @ (*)begin
 				ren_f41=1;
 				{from.noc_from_dev_ctl,from.noc_from_dev_data}=	dout_f41;
 			end
+			dest_id_out_d=8'h41;
 		end
 		d42_rr:begin
 			if (empty_f42)begin
@@ -478,6 +481,7 @@ always @ (*)begin
 				ren_f42=1;
 				{from.noc_from_dev_ctl,from.noc_from_dev_data}=	dout_f42;
 			end
+			dest_id_out_d=8'h42;
 		end
 		d43_rr:begin
 			if (empty_f43) begin
@@ -488,6 +492,7 @@ always @ (*)begin
 				ren_f43=1;
 				{from.noc_from_dev_ctl,from.noc_from_dev_data}=	dout_f43;
 			end
+			dest_id_out_d=8'h43;
 		end
 		default :;
 		endcase
@@ -497,13 +502,13 @@ always @ (*)begin
 	
 	//sm to manage arbitration and select grant_out
 	case (ps_arb)
+	//removed state
 	reset_arb:begin
 		//default grant out is 0
 		//commenting for now
 		//grant_out_d=0;
 		
 		//if rr exists, then next is check arb or else check lp_arb
-			
 			ns_arb=check_arb;
 	
 	end
@@ -544,9 +549,7 @@ always @ (*)begin
 			;//$display("read resp arrived for dev 43");
 		else ;//$display ("dev 43 fifo empty");
 	
-		ns_arb=checkhp_arb;
-	end
-	checkhp_arb:begin
+		//read resp
 		//checks if read response exists to req high priority grant
 		//only works with one read resp at a time
 		//check if not greedy
@@ -562,16 +565,27 @@ always @ (*)begin
 		if (rr43_exists)begin
 			req_hp_d[0]=1;
 		end
-		ns_arb=decide_arb;
+		
+		//go to next only when imp
+		if(ps_rr==reset_rr)
+			ns_arb=decide_arb;
 	end
 	decide_arb:begin
 		//decide if lp or hp wins
-		ns_arb=reset_arb;
+		ns_arb=check_arb;
 
 		if (req_hp==0) begin
 			grant_out_d=grant_lp;
 			//clear specific req signal
-			req_lp_d[grant_lp]=0;
+			
+			if (grant_lp==8) 
+				req_lp_d[3]=0;
+			else if (grant_lp==4)
+				req_lp_d[2]=0;
+			else if (grant_lp==2)
+				req_lp_d[1]=0;
+			else if(grant_lp==1)
+				req_lp_d[0]=0;
 		end
 		else begin
 			grant_out_d=grant_hp;
@@ -598,6 +612,24 @@ always @ (*)begin
 			end
 		end
 		
+		//clear both req signals
+		if (grant_out_d==8) begin
+			req_hp_d[3]=0;
+			req_lp_d[3]=0;
+		end
+		if (grant_out_d==4) begin
+			req_hp_d[2]=0;
+			req_lp_d[2]=0;
+		end
+		if (grant_out_d==2) begin
+			req_hp_d[1]=0;
+			req_lp_d[1]=0;
+		end
+		if (grant_out_d==1) begin
+			req_hp_d[0]=0;
+			req_lp_d[0]=0;
+		end
+		
 		arb_clk=!arb_clk;
 	end
 	endcase
@@ -609,6 +641,7 @@ always @ (posedge to.clk or posedge to.reset) begin
 		ps_ds<= reset_ds;
 		cmd<=0;
 		dest_id<=0;
+		
 		ps_dr<=reset_dr;
 		delay<=0;
 		delay1<=0;
@@ -629,7 +662,7 @@ always @ (posedge to.clk or posedge to.reset) begin
 		rr43_exists<=0;
 		req_lp<=0;
 		req_hp<=0;
-		
+		dest_id_out<=0;
 	end
 	else begin
 		ps_ds<= #1 ns_ds;
@@ -655,6 +688,8 @@ always @ (posedge to.clk or posedge to.reset) begin
 		rr43_exists<= #1 rr43_exists_d;
 		req_lp<= #1 req_lp_d;
 		req_hp<= #1 req_hp_d;
+		dest_id_out<= #1 dest_id_out_d;
 	end
 end
 endmodule
+

@@ -987,8 +987,8 @@ endtask : t13
 
 ps p(bif.TI,bif.FO);
 
+//number of pushouts
 int count_40,count_41,count_42,count_43;
-
 initial begin
 	count_40=0;
 	forever begin
@@ -1000,6 +1000,7 @@ end
 
 initial begin
 	count_41=0;
+	
 	forever begin
 		@(posedge p.s1.b2.pushout)
 			count_41++;
@@ -1022,12 +1023,13 @@ initial begin
 		@(posedge p.s1.b4.pushout)
 			count_43++;
 		$display ("pushout count43:%d",count_43);
+		//$display ("pushout left in 43:%d",1000-count_43);
 	end	
 end
 
 initial begin
 //    repeat(1_000_000) @(posedge(clk));
-    //repeat (1) @ (posedge p.s1.b2.pushout);
+    repeat (10) @ (posedge p.s1.b2.pushout);
 	$dumpfile("perm.vcd");
     $dumpvars(9,top);
     repeat(100000) @(posedge(clk));

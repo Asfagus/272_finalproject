@@ -1,8 +1,7 @@
-
 module fifo (clk, rstp, data_in, writep, readp, 
 	 data_out, emptyp, fullp);
 	 
-parameter	DEPTH = 6,		// 2 bits, e.g. 4 words in the FIFO. 2^8 bits
+parameter	DEPTH = 5,		// 2 bits, e.g. 4 words in the FIFO. 2^8 bits
 			bitsize=9,
 		MAX_COUNT = (1<<DEPTH);	// topmost address in FIFO.
 
