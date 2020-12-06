@@ -1,8 +1,6 @@
 `include "box.sv"
 `include "fifo.v"
 `include "pri_rr_arb.sv"
-//remove later
-
 module switch (NOCI.TI to,NOCI.FO from);
 
 //Registers
@@ -641,7 +639,6 @@ always @ (posedge to.clk or posedge to.reset) begin
 		ps_ds<= reset_ds;
 		cmd<=0;
 		dest_id<=0;
-		
 		ps_dr<=reset_dr;
 		delay<=0;
 		delay1<=0;

@@ -1,0 +1,583 @@
+/apps/synopsys/VCSMX_NEW/bin/vcs
+
+Warning-[LNX_OS_VERUN] Unsupported Linux version
+  Linux version 'CentOS Linux release 7.8.2003 (Core)' is not supported on 
+  'x86_64' officially, assuming linux compatibility by default. Set 
+  VCS_ARCH_OVERRIDE to linux or suse32 to override.
+  Please refer to release notes for information on supported platforms.
+
+
+Warning-[LINX_KRNL] Unsupported Linux kernel
+  Linux kernel '3.10.0-1127.8.2.el7.x86_64' is not supported.
+  Supported versions are 2.4* or 2.6*.
+
+                         Chronologic VCS (TM)
+           Version I-2014.03-2 -- Sun Dec  6 12:18:06 2020
+               Copyright (c) 1991-2014 by Synopsys Inc.
+                         ALL RIGHTS RESERVED
+
+This program is proprietary and confidential information of Synopsys Inc.
+and may be used and disclosed only as authorized in a license agreement
+controlling such use and disclosure.
+
+Parsing design file 'baby.sv'
+Parsing included file 'tb_intf.sv'.
+Back to file 'baby.sv'.
+Parsing included file 'ps.sv'.
+Parsing included file 'switch.sv'.
+Parsing included file 'box.sv'.
+Parsing included file 'perm.sv'.
+Back to file 'box.sv'.
+Parsing included file 'm55.sv'.
+Back to file 'box.sv'.
+Parsing included file 'nochw2.sv'.
+Parsing included file 'fifo_s.v'.
+Back to file 'nochw2.sv'.
+Back to file 'box.sv'.
+Back to file 'switch.sv'.
+Parsing included file 'fifo.v'.
+Back to file 'switch.sv'.
+Parsing included file 'pri_rr_arb.sv'.
+Back to file 'switch.sv'.
+Back to file 'ps.sv'.
+Back to file 'baby.sv'.
+Top Level Modules:
+       top
+TimeScale is 1 ns / 10 ps
+
+Warning-[CWUC] Concatenations with unsized constants
+nochw2.sv, 430
+"0"
+  An unsized constant '0' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+nochw2.sv, 484
+"0"
+  An unsized constant '0' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 165
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 447
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 454
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 465
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 476
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 487
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[INTFDV] VCD dumping of interface/program/package
+  Selective VCD dumping of interface 'NOCI' is not supported.  Selective VCD 
+  dumping for interfaces, packages and programs is not supported.   Results 
+  are not guaranteed.
+  Use VPD or FSDB dumping, recompile with +vcsd, or use full VCD dumping 
+  '$dumpvars(0)'.
+
+Notice: Ports coerced to inout, use -notice for details
+Starting vcs inline pass...
+10 modules and 0 UDP read.
+	However, due to incremental compilation, only 4 modules need to be compiled.
+recompiling module box because:
+	This module or some inlined child module(s) has/have been modified.
+recompiling module switch because:
+	This module or some inlined child module(s) has/have been modified.
+recompiling module top because:
+	This module or some inlined child module(s) has/have been modified.
+All of 4 modules done
+rm -f _csrc*.so linux_scvhdl_*.so pre_vcsobj_*.so share_vcsobj_*.so
+ld -m elf_i386 -shared -o .//../simv.daidir//_csrc1.so --whole-archive _vcsobj_1_1.a  --no-whole-archive
+ld -m elf_i386 -shared -o .//../simv.daidir//_csrc0.so 5NrI_d.o 5NrIB_d.o SIM_l.o  
+ld -m elf_i386 -shared -o .//../simv.daidir//pre_vcsobj_0_1.so --whole-archive pre_vcsobj_0_1.a --no-whole-archive
+ld -m elf_i386 -shared -o .//../simv.daidir//pre_vcsobj_1_1.so --whole-archive pre_vcsobj_1_1.a --no-whole-archive
+ld -m elf_i386 -shared -o .//../simv.daidir//pre_vcsobj_1_2.so --whole-archive pre_vcsobj_1_2.a --no-whole-archive
+if [ -x ../simv ]; then chmod -x ../simv; fi
+g++  -o ../simv  -m32 -m32   -Wl,-rpath-link=./ -Wl,-rpath='$ORIGIN'/simv.daidir/ -Wl,-rpath='$ORIGIN'/simv.daidir//scsim.db.dir  _csrc1.so _csrc0.so   pre_vcsobj_0_1.so pre_vcsobj_1_1.so pre_vcsobj_1_2.so  rmapats_mop.o rmapats.o rmar.o           /apps/synopsys/VCSMX_NEW/linux/lib/libzerosoft_rt_stubs.so /apps/synopsys/VCSMX_NEW/linux/lib/libvirsim.so /apps/synopsys/VCSMX_NEW/linux/lib/librterrorinf.so /apps/synopsys/VCSMX_NEW/linux/lib/libsnpsmalloc.so    /apps/synopsys/VCSMX_NEW/linux/lib/libvcsnew.so /apps/synopsys/VCSMX_NEW/linux/lib/libuclinative.so   -Wl,-whole-archive /apps/synopsys/VCSMX_NEW/linux/lib/libvcsucli.so -Wl,-no-whole-archive          /apps/synopsys/VCSMX_NEW/linux/lib/vcs_save_restore_new.o /apps/synopsys/VCSMX_NEW/linux/lib/ctype-stubs_32.a -ldl  -lc -lm -lpthread -ldl 
+../simv up to date
+CPU time: .446 seconds to compile + .085 seconds to elab + .266 seconds to link
+Chronologic VCS simulator copyright 1991-2014
+Contains Synopsys proprietary information.
+Compiler version I-2014.03-2; Runtime version I-2014.03-2;  Dec  6 12:18 2020
+
+
+
+Oh what joy, It's a happy perm block
+
+
+
+$finish called from file "baby.sv", line 369.
+$finish at simulation time          11676666100
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 116766661000 ps
+CPU Time:     82.250 seconds;       Data structure size:   0.1Mb
+Sun Dec  6 12:19:31 2020
+baby done
+/apps/synopsys/VCSMX_NEW/bin/vcs
+
+Warning-[LNX_OS_VERUN] Unsupported Linux version
+  Linux version 'CentOS Linux release 7.8.2003 (Core)' is not supported on 
+  'x86_64' officially, assuming linux compatibility by default. Set 
+  VCS_ARCH_OVERRIDE to linux or suse32 to override.
+  Please refer to release notes for information on supported platforms.
+
+
+Warning-[LINX_KRNL] Unsupported Linux kernel
+  Linux kernel '3.10.0-1127.8.2.el7.x86_64' is not supported.
+  Supported versions are 2.4* or 2.6*.
+
+                         Chronologic VCS (TM)
+           Version I-2014.03-2 -- Sun Dec  6 12:19:31 2020
+               Copyright (c) 1991-2014 by Synopsys Inc.
+                         ALL RIGHTS RESERVED
+
+This program is proprietary and confidential information of Synopsys Inc.
+and may be used and disclosed only as authorized in a license agreement
+controlling such use and disclosure.
+
+Parsing design file 'child.sv'
+Parsing included file 'tb_intf.sv'.
+Back to file 'child.sv'.
+Parsing included file 'ps.sv'.
+Parsing included file 'switch.sv'.
+Parsing included file 'box.sv'.
+Parsing included file 'perm.sv'.
+Back to file 'box.sv'.
+Parsing included file 'm55.sv'.
+Back to file 'box.sv'.
+Parsing included file 'nochw2.sv'.
+Parsing included file 'fifo_s.v'.
+Back to file 'nochw2.sv'.
+Back to file 'box.sv'.
+Back to file 'switch.sv'.
+Parsing included file 'fifo.v'.
+Back to file 'switch.sv'.
+Parsing included file 'pri_rr_arb.sv'.
+Back to file 'switch.sv'.
+Back to file 'ps.sv'.
+Back to file 'child.sv'.
+Top Level Modules:
+       top
+TimeScale is 1 ns / 10 ps
+
+Warning-[CWUC] Concatenations with unsized constants
+nochw2.sv, 430
+"0"
+  An unsized constant '0' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+nochw2.sv, 484
+"0"
+  An unsized constant '0' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 165
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 447
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 454
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 465
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 476
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 487
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[INTFDV] VCD dumping of interface/program/package
+  Selective VCD dumping of interface 'NOCI' is not supported.  Selective VCD 
+  dumping for interfaces, packages and programs is not supported.   Results 
+  are not guaranteed.
+  Use VPD or FSDB dumping, recompile with +vcsd, or use full VCD dumping 
+  '$dumpvars(0)'.
+
+Notice: Ports coerced to inout, use -notice for details
+Starting vcs inline pass...
+10 modules and 0 UDP read.
+	However, due to incremental compilation, only 3 modules need to be compiled.
+recompiling module box because:
+	This module or some inlined child module(s) has/have been modified.
+recompiling module switch because:
+	This module or some inlined child module(s) has/have been modified.
+recompiling module top because:
+	This module or some inlined child module(s) has/have been modified.
+All of 3 modules done
+rm -f _csrc*.so linux_scvhdl_*.so pre_vcsobj_*.so share_vcsobj_*.so
+ld -m elf_i386 -shared -o .//../simv.daidir//_csrc1.so --whole-archive _vcsobj_1_1.a  --no-whole-archive
+ld -m elf_i386 -shared -o .//../simv.daidir//_csrc0.so 5NrI_d.o 5NrIB_d.o SIM_l.o  
+ld -m elf_i386 -shared -o .//../simv.daidir//pre_vcsobj_0_1.so --whole-archive pre_vcsobj_0_1.a --no-whole-archive
+ld -m elf_i386 -shared -o .//../simv.daidir//pre_vcsobj_1_1.so --whole-archive pre_vcsobj_1_1.a --no-whole-archive
+ld -m elf_i386 -shared -o .//../simv.daidir//pre_vcsobj_1_2.so --whole-archive pre_vcsobj_1_2.a --no-whole-archive
+ld -m elf_i386 -shared -o .//../simv.daidir//pre_vcsobj_1_3.so --whole-archive pre_vcsobj_1_3.a --no-whole-archive
+if [ -x ../simv ]; then chmod -x ../simv; fi
+g++  -o ../simv  -m32 -m32   -Wl,-rpath-link=./ -Wl,-rpath='$ORIGIN'/simv.daidir/ -Wl,-rpath='$ORIGIN'/simv.daidir//scsim.db.dir  _csrc1.so _csrc0.so   pre_vcsobj_0_1.so pre_vcsobj_1_1.so pre_vcsobj_1_2.so pre_vcsobj_1_3.so  rmapats_mop.o rmapats.o rmar.o           /apps/synopsys/VCSMX_NEW/linux/lib/libzerosoft_rt_stubs.so /apps/synopsys/VCSMX_NEW/linux/lib/libvirsim.so /apps/synopsys/VCSMX_NEW/linux/lib/librterrorinf.so /apps/synopsys/VCSMX_NEW/linux/lib/libsnpsmalloc.so    /apps/synopsys/VCSMX_NEW/linux/lib/libvcsnew.so /apps/synopsys/VCSMX_NEW/linux/lib/libuclinative.so   -Wl,-whole-archive /apps/synopsys/VCSMX_NEW/linux/lib/libvcsucli.so -Wl,-no-whole-archive          /apps/synopsys/VCSMX_NEW/linux/lib/vcs_save_restore_new.o /apps/synopsys/VCSMX_NEW/linux/lib/ctype-stubs_32.a -ldl  -lc -lm -lpthread -ldl 
+../simv up to date
+CPU time: .468 seconds to compile + .082 seconds to elab + .264 seconds to link
+Chronologic VCS simulator copyright 1991-2014
+Contains Synopsys proprietary information.
+Compiler version I-2014.03-2; Runtime version I-2014.03-2;  Dec  6 12:19 2020
+
+
+
+Oh what joy, It's a happy perm block
+
+
+
+$finish called from file "child.sv", line 430.
+$finish at simulation time           7785522100
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 77855221000 ps
+CPU Time:     56.500 seconds;       Data structure size:   0.1Mb
+Sun Dec  6 12:20:34 2020
+child done
+/apps/synopsys/VCSMX_NEW/bin/vcs
+
+Warning-[LNX_OS_VERUN] Unsupported Linux version
+  Linux version 'CentOS Linux release 7.8.2003 (Core)' is not supported on 
+  'x86_64' officially, assuming linux compatibility by default. Set 
+  VCS_ARCH_OVERRIDE to linux or suse32 to override.
+  Please refer to release notes for information on supported platforms.
+
+
+Warning-[LINX_KRNL] Unsupported Linux kernel
+  Linux kernel '3.10.0-1127.8.2.el7.x86_64' is not supported.
+  Supported versions are 2.4* or 2.6*.
+
+                         Chronologic VCS (TM)
+           Version I-2014.03-2 -- Sun Dec  6 12:20:34 2020
+               Copyright (c) 1991-2014 by Synopsys Inc.
+                         ALL RIGHTS RESERVED
+
+This program is proprietary and confidential information of Synopsys Inc.
+and may be used and disclosed only as authorized in a license agreement
+controlling such use and disclosure.
+
+Parsing design file 'teen.sv'
+Parsing included file 'tb_intf.sv'.
+Back to file 'teen.sv'.
+Parsing included file 'ps.sv'.
+Parsing included file 'switch.sv'.
+Parsing included file 'box.sv'.
+Parsing included file 'perm.sv'.
+Back to file 'box.sv'.
+Parsing included file 'm55.sv'.
+Back to file 'box.sv'.
+Parsing included file 'nochw2.sv'.
+Parsing included file 'fifo_s.v'.
+Back to file 'nochw2.sv'.
+Back to file 'box.sv'.
+Back to file 'switch.sv'.
+Parsing included file 'fifo.v'.
+Back to file 'switch.sv'.
+Parsing included file 'pri_rr_arb.sv'.
+Back to file 'switch.sv'.
+Back to file 'ps.sv'.
+Back to file 'teen.sv'.
+Top Level Modules:
+       top
+TimeScale is 1 ns / 10 ps
+
+Warning-[CWUC] Concatenations with unsized constants
+nochw2.sv, 430
+"0"
+  An unsized constant '0' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+nochw2.sv, 484
+"0"
+  An unsized constant '0' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 165
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 447
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 454
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 465
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 476
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 487
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+Notice: Ports coerced to inout, use -notice for details
+Starting vcs inline pass...
+10 modules and 0 UDP read.
+	However, due to incremental compilation, only 3 modules need to be compiled.
+recompiling module switch because:
+	This module or some inlined child module(s) has/have been modified.
+recompiling module top because:
+	This module or some inlined child module(s) has/have been modified.
+All of 3 modules done
+rm -f _csrc*.so linux_scvhdl_*.so pre_vcsobj_*.so share_vcsobj_*.so
+ld -m elf_i386 -shared -o .//../simv.daidir//_csrc1.so --whole-archive _vcsobj_1_1.a  --no-whole-archive
+ld -m elf_i386 -shared -o .//../simv.daidir//_csrc0.so 5NrI_d.o 5NrIB_d.o SIM_l.o  
+ld -m elf_i386 -shared -o .//../simv.daidir//pre_vcsobj_0_1.so --whole-archive pre_vcsobj_0_1.a --no-whole-archive
+ld -m elf_i386 -shared -o .//../simv.daidir//pre_vcsobj_1_1.so --whole-archive pre_vcsobj_1_1.a --no-whole-archive
+ld -m elf_i386 -shared -o .//../simv.daidir//pre_vcsobj_1_2.so --whole-archive pre_vcsobj_1_2.a --no-whole-archive
+ld -m elf_i386 -shared -o .//../simv.daidir//pre_vcsobj_1_3.so --whole-archive pre_vcsobj_1_3.a --no-whole-archive
+if [ -x ../simv ]; then chmod -x ../simv; fi
+g++  -o ../simv  -m32 -m32   -Wl,-rpath-link=./ -Wl,-rpath='$ORIGIN'/simv.daidir/ -Wl,-rpath='$ORIGIN'/simv.daidir//scsim.db.dir  _csrc1.so _csrc0.so   pre_vcsobj_0_1.so pre_vcsobj_1_1.so pre_vcsobj_1_2.so pre_vcsobj_1_3.so  rmapats_mop.o rmapats.o rmar.o           /apps/synopsys/VCSMX_NEW/linux/lib/libzerosoft_rt_stubs.so /apps/synopsys/VCSMX_NEW/linux/lib/libvirsim.so /apps/synopsys/VCSMX_NEW/linux/lib/librterrorinf.so /apps/synopsys/VCSMX_NEW/linux/lib/libsnpsmalloc.so    /apps/synopsys/VCSMX_NEW/linux/lib/libvcsnew.so /apps/synopsys/VCSMX_NEW/linux/lib/libuclinative.so   -Wl,-whole-archive /apps/synopsys/VCSMX_NEW/linux/lib/libvcsucli.so -Wl,-no-whole-archive          /apps/synopsys/VCSMX_NEW/linux/lib/vcs_save_restore_new.o /apps/synopsys/VCSMX_NEW/linux/lib/ctype-stubs_32.a -ldl  -lc -lm -lpthread -ldl 
+../simv up to date
+CPU time: .324 seconds to compile + .057 seconds to elab + .189 seconds to link
+Chronologic VCS simulator copyright 1991-2014
+Contains Synopsys proprietary information.
+Compiler version I-2014.03-2; Runtime version I-2014.03-2;  Dec  6 12:20 2020
+
+
+
+Oh what joy, It's a happy perm block
+
+
+
+$finish called from file "teen.sv", line 518.
+$finish at simulation time           3893281100
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 38932811000 ps
+CPU Time:     40.060 seconds;       Data structure size:   0.1Mb
+Sun Dec  6 12:21:17 2020
+teen done
+/apps/synopsys/VCSMX_NEW/bin/vcs
+
+Warning-[LNX_OS_VERUN] Unsupported Linux version
+  Linux version 'CentOS Linux release 7.8.2003 (Core)' is not supported on 
+  'x86_64' officially, assuming linux compatibility by default. Set 
+  VCS_ARCH_OVERRIDE to linux or suse32 to override.
+  Please refer to release notes for information on supported platforms.
+
+
+Warning-[LINX_KRNL] Unsupported Linux kernel
+  Linux kernel '3.10.0-1127.8.2.el7.x86_64' is not supported.
+  Supported versions are 2.4* or 2.6*.
+
+                         Chronologic VCS (TM)
+           Version I-2014.03-2 -- Sun Dec  6 12:21:18 2020
+               Copyright (c) 1991-2014 by Synopsys Inc.
+                         ALL RIGHTS RESERVED
+
+This program is proprietary and confidential information of Synopsys Inc.
+and may be used and disclosed only as authorized in a license agreement
+controlling such use and disclosure.
+
+Parsing design file 'adult.sv'
+Parsing included file 'tb_intf.sv'.
+Back to file 'adult.sv'.
+Parsing included file 'ps.sv'.
+Parsing included file 'switch.sv'.
+Parsing included file 'box.sv'.
+Parsing included file 'perm.sv'.
+Back to file 'box.sv'.
+Parsing included file 'm55.sv'.
+Back to file 'box.sv'.
+Parsing included file 'nochw2.sv'.
+Parsing included file 'fifo_s.v'.
+Back to file 'nochw2.sv'.
+Back to file 'box.sv'.
+Back to file 'switch.sv'.
+Parsing included file 'fifo.v'.
+Back to file 'switch.sv'.
+Parsing included file 'pri_rr_arb.sv'.
+Back to file 'switch.sv'.
+Back to file 'ps.sv'.
+Back to file 'adult.sv'.
+Top Level Modules:
+       top
+TimeScale is 1 ns / 10 ps
+
+Warning-[CWUC] Concatenations with unsized constants
+nochw2.sv, 430
+"0"
+  An unsized constant '0' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+nochw2.sv, 484
+"0"
+  An unsized constant '0' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 165
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 447
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 454
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 465
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 476
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[CWUC] Concatenations with unsized constants
+switch.sv, 487
+"1"
+  An unsized constant '1' is used in the concatenation. The unsized constant 
+  will be used as a 32-bit constant.
+
+
+Warning-[INTFDV] VCD dumping of interface/program/package
+  Selective VCD dumping of interface 'NOCI' is not supported.  Selective VCD 
+  dumping for interfaces, packages and programs is not supported.   Results 
+  are not guaranteed.
+  Use VPD or FSDB dumping, recompile with +vcsd, or use full VCD dumping 
+  '$dumpvars(0)'.
+
+Notice: Ports coerced to inout, use -notice for details
+Starting vcs inline pass...
+10 modules and 0 UDP read.
+	However, due to incremental compilation, only 3 modules need to be compiled.
+recompiling module switch because:
+	This module or some inlined child module(s) has/have been modified.
+recompiling module top because:
+	This module or some inlined child module(s) has/have been modified.
+All of 3 modules done
+rm -f _csrc*.so linux_scvhdl_*.so pre_vcsobj_*.so share_vcsobj_*.so
+ld -m elf_i386 -shared -o .//../simv.daidir//_csrc1.so --whole-archive _vcsobj_1_1.a  --no-whole-archive
+ld -m elf_i386 -shared -o .//../simv.daidir//_csrc0.so 5NrI_d.o 5NrIB_d.o SIM_l.o  
+ld -m elf_i386 -shared -o .//../simv.daidir//pre_vcsobj_1_1.so --whole-archive pre_vcsobj_1_1.a --no-whole-archive
+ld -m elf_i386 -shared -o .//../simv.daidir//pre_vcsobj_1_2.so --whole-archive pre_vcsobj_1_2.a --no-whole-archive
+ld -m elf_i386 -shared -o .//../simv.daidir//pre_vcsobj_1_3.so --whole-archive pre_vcsobj_1_3.a --no-whole-archive
+ld -m elf_i386 -shared -o .//../simv.daidir//pre_vcsobj_1_4.so --whole-archive pre_vcsobj_1_4.a --no-whole-archive
+if [ -x ../simv ]; then chmod -x ../simv; fi
+g++  -o ../simv  -m32 -m32   -Wl,-rpath-link=./ -Wl,-rpath='$ORIGIN'/simv.daidir/ -Wl,-rpath='$ORIGIN'/simv.daidir//scsim.db.dir  _csrc1.so _csrc0.so   pre_vcsobj_1_1.so pre_vcsobj_1_2.so pre_vcsobj_1_3.so pre_vcsobj_1_4.so  rmapats_mop.o rmapats.o rmar.o           /apps/synopsys/VCSMX_NEW/linux/lib/libzerosoft_rt_stubs.so /apps/synopsys/VCSMX_NEW/linux/lib/libvirsim.so /apps/synopsys/VCSMX_NEW/linux/lib/librterrorinf.so /apps/synopsys/VCSMX_NEW/linux/lib/libsnpsmalloc.so    /apps/synopsys/VCSMX_NEW/linux/lib/libvcsnew.so /apps/synopsys/VCSMX_NEW/linux/lib/libuclinative.so   -Wl,-whole-archive /apps/synopsys/VCSMX_NEW/linux/lib/libvcsucli.so -Wl,-no-whole-archive          /apps/synopsys/VCSMX_NEW/linux/lib/vcs_save_restore_new.o /apps/synopsys/VCSMX_NEW/linux/lib/ctype-stubs_32.a -ldl  -lc -lm -lpthread -ldl 
+../simv up to date
+CPU time: .475 seconds to compile + .081 seconds to elab + .266 seconds to link
+Chronologic VCS simulator copyright 1991-2014
+Contains Synopsys proprietary information.
+Compiler version I-2014.03-2; Runtime version I-2014.03-2;  Dec  6 12:21 2020
+
+
+
+Oh what joy, It's a happy perm block
+
+
+
+$finish called from file "adult.sv", line 771.
+$finish at simulation time           3894215100
+           V C S   S i m u l a t i o n   R e p o r t 
+Time: 38942151000 ps
+CPU Time:     67.930 seconds;       Data structure size:   0.1Mb
+Sun Dec  6 12:22:30 2020
+adult done

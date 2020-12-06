@@ -634,7 +634,7 @@ initial begin
 	forever begin
 		@(posedge p.s1.b1.pushout)
 			count_40++;
-		$display ("count40:%d",count_40);
+		//$display ("count40:%d",count_40);
 	end	
 end
 
@@ -643,7 +643,7 @@ initial begin
 	forever begin
 		@(posedge p.s1.b2.pushout)
 			count_41++;
-		$display ("count41:%d",count_41);
+		//$display ("count41:%d",count_41);
 	end	
 end
 

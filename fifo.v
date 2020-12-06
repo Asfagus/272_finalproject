@@ -3,7 +3,7 @@ module fifo (clk, rstp, data_in, writep, readp,
 	 
 parameter	DEPTH = 5,		// 2 bits, e.g. 4 words in the FIFO. 2^8 bits
 			bitsize=9,
-		MAX_COUNT = (1<<DEPTH);	// topmost address in FIFO.
+		MAX_COUNT = 1<<DEPTH;	// topmost address in FIFO.
 
 input		clk;
 input		rstp;
@@ -16,8 +16,8 @@ output		fullp;
 
 // Defines sizes in terms of bits.
 //
-reg 		emptyp;
-reg		fullp;
+reg emptyp;
+reg	fullp;
 
 // Registered output.
 reg [bitsize-1:0]	data_out;
