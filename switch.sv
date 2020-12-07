@@ -1,6 +1,6 @@
 `include "box.sv"
 `include "fifo.v"
-`include "pri_rr_arb.sv"
+`include "arb.sv"
 module switch (NOCI.TI to,NOCI.FO from);
 
 //Registers
