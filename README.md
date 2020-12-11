@@ -14,3 +14,7 @@ Thus, the Switch succesfully creates a communication channel for the permutation
 In the second revision, the fifo depth was reduced from 256 bytes to 64 bytes. This was done to reduce memory consumption. To achieve this, I had to add a priority round robin arbiter for selecting the high priority signals first out of the fifo.
 
 In the third revision, the fifo depth was reduced to 32 bytes. This was achieved by using two priority round robin arbitration schemes that synchronously work each request and grant access to the bus. A state machine controls the arbiters.
+
+This is a rough architecture diagram of the project
+
+![](272_finalproject_arch.png)
