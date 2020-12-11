@@ -17,4 +17,4 @@ In the third revision, the fifo depth was reduced to 32 bytes. This was achieved
 
 This is a rough architecture diagram of the project
 
-![](272_finalproject_arch.png)
+![](images/272_finalproject_arch.svg)
